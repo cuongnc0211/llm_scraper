@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require "dotenv"
+Dotenv.load
+
 require "llm_scraper"
 require "vcr"
 require "webmock/rspec"

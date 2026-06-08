@@ -10,6 +10,9 @@
 # rspec failure tracking
 .rspec_status
 
+# Environment variables — never commit
+.env
+
 # Local development / tooling
 .claude/
 plans/
