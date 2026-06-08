@@ -29,7 +29,10 @@ module LlmScraper
       end
 
       def build_connection(base_url:, timeout: 30)
-        Faraday.new(url: base_url) do |f|
+        # Trailing slash required so relative paths (e.g. "chat/completions")
+        # are appended correctly when base_url itself has a path component
+        url = base_url.end_with?("/") ? base_url : "#{base_url}/"
+        Faraday.new(url: url) do |f|
           f.request  :retry, max: 2, interval: 1, backoff_factor: 2,
                      retry_statuses: [429, 500, 502, 503, 504]
           f.options.timeout      = timeout

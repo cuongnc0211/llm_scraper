@@ -14,7 +14,7 @@ module LlmScraper
       # @param prompt [String]
       # @return [Hash] { content:, tokens:, cost_usd: }
       def complete(prompt)
-        response = @conn.post("/v1/messages") do |req|
+        response = @conn.post("v1/messages") do |req|
           req.headers["x-api-key"]        = @config.llm_api_key
           req.headers["anthropic-version"] = API_VERSION
           req.headers["Content-Type"]      = "application/json"

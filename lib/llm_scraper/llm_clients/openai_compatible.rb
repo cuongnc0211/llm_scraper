@@ -11,7 +11,7 @@ module LlmScraper
       # @param prompt [String]
       # @return [Hash] { content:, tokens:, cost_usd: }
       def complete(prompt)
-        response = @conn.post("/chat/completions") do |req|
+        response = @conn.post("chat/completions") do |req|
           req.headers["Authorization"] = "Bearer #{@config.llm_api_key}"
           req.headers["Content-Type"]  = "application/json"
           req.body = JSON.generate(
