@@ -9,3 +9,12 @@
 
 # rspec failure tracking
 .rspec_status
+
+# Local development / tooling
+.claude/
+plans/
+release-manifest.json
+~/
+
+# Gems don't commit Gemfile.lock (apps do)
+Gemfile.lock
