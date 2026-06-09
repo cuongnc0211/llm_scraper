@@ -22,3 +22,6 @@ release-manifest.json
 
 # Gems don't commit Gemfile.lock (apps do)
 Gemfile.lock
+
+# Built gem artifacts
+*.gem
