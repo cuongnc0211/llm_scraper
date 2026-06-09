@@ -141,6 +141,36 @@ RSpec.describe LlmScraper::Scraper do
     end
   end
 
+  describe "#scrape with spa: true" do
+    it "forwards spa: true to local fetcher" do
+      local_config = config.dup.tap { |c| c.fetcher = :local }
+      local_scraper = described_class.new(schema: schema, config: local_config)
+
+      fetcher_double = instance_double(LlmScraper::ContentFetchers::Local)
+      allow(LlmScraper::ContentFetchers::Local).to receive(:new).and_return(fetcher_double)
+      allow(fetcher_double).to receive(:fetch).with("https://example.com/spa", spa: true).and_return("# SPA content")
+
+      stub_request(:post, "https://api.deepseek.com/v1/chat/completions")
+        .to_return(status: 200, body: llm_response_body, headers: { "Content-Type" => "application/json" })
+
+      result = local_scraper.scrape("https://example.com/spa", spa: true)
+
+      expect(fetcher_double).to have_received(:fetch).with("https://example.com/spa", spa: true)
+      expect(result).to be_success
+    end
+
+    it "does not forward spa: to non-local fetchers" do
+      jina_scraper = described_class.new(schema: schema, config: config)
+
+      stub_request(:get, "https://r.jina.ai/https://example.com/page")
+        .to_return(status: 200, body: "# Content")
+      stub_request(:post, "https://api.deepseek.com/v1/chat/completions")
+        .to_return(status: 200, body: llm_response_body, headers: { "Content-Type" => "application/json" })
+
+      expect { jina_scraper.scrape("https://example.com/page", spa: true) }.not_to raise_error
+    end
+  end
+
   describe "#with_fetcher" do
     it "returns new Scraper with swapped fetcher" do
       html = "<html><body><h1>Gu Jingzhou teapot</h1></body></html>"

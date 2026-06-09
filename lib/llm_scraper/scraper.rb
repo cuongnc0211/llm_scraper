@@ -11,11 +11,12 @@ module LlmScraper
 
     # @param url [String]
     # @param rescue_errors [Boolean] return error Result instead of raising
+    # @param spa [Boolean] use headless Chrome for JS-rendered pages (local fetcher only)
     # @return [Result]
     # @raise [LlmScraper::Error] when rescue_errors is false
-    def scrape(url, rescue_errors: false)
+    def scrape(url, rescue_errors: false, spa: false)
       start = monotonic_now
-      result = run_pipeline(url: url)
+      result = run_pipeline(url: url, spa: spa)
       attach_timing(result, start)
     rescue LlmScraper::Error => e
       raise unless rescue_errors
@@ -34,9 +35,10 @@ module LlmScraper
     end
 
     # @param urls [Array<String>]
+    # @param spa [Boolean] use headless Chrome for JS-rendered pages (local fetcher only)
     # @return [Array<Result>] never raises — errors captured in result.error
-    def scrape_batch(urls)
-      urls.map { |url| scrape(url, rescue_errors: true) }
+    def scrape_batch(urls, spa: false)
+      urls.map { |url| scrape(url, rescue_errors: true, spa: spa) }
     end
 
     # @param provider [Symbol] :openai_compatible | :anthropic
@@ -53,8 +55,9 @@ module LlmScraper
 
     private
 
-    def run_pipeline(url:)
-      content = build_fetcher.fetch(url)
+    def run_pipeline(url:, spa: false)
+      fetcher = build_fetcher
+      content = @config.fetcher == :local ? fetcher.fetch(url, spa: spa) : fetcher.fetch(url)
       result  = run_llm_pipeline(content: content)
       result.url     = url
       result.fetcher = @config.fetcher
