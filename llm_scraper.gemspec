@@ -31,10 +31,11 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "faraday",       ">= 1.10"
-  spec.add_dependency "faraday-retry", ">= 2.0"
-  spec.add_dependency "nokogiri",      ">= 1.15"
-  spec.add_dependency "zeitwerk",      ">= 2.6"
+  spec.add_dependency "faraday",           ">= 1.10"
+  spec.add_dependency "faraday-retry",     ">= 2.0"
+  spec.add_dependency "nokogiri",          ">= 1.15"
+  spec.add_dependency "reverse_markdown",  ">= 2.0"
+  spec.add_dependency "zeitwerk",          ">= 2.6"
 
   spec.add_development_dependency "rspec",            "~> 3.0"
   spec.add_development_dependency "vcr",              "~> 6.0"

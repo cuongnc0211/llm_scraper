@@ -4,6 +4,7 @@ require "zeitwerk"
 require "faraday"
 require "faraday/retry"
 require "nokogiri"
+require "reverse_markdown"
 require "json"
 
 loader = Zeitwerk::Loader.for_gem

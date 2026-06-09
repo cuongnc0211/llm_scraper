@@ -5,7 +5,7 @@ RSpec.describe LlmScraper::ContentFetchers::Local do
   let(:sample_html) { File.read(File.join(__dir__, "../../fixtures/sample.html")) }
 
   describe "#fetch" do
-    it "fetches and strips boilerplate HTML", :vcr do
+    it "fetches HTML and converts to Markdown preserving structure", :vcr do
       stub_request(:get, "https://example.com/artist")
         .to_return(status: 200, body: sample_html, headers: { "Content-Type" => "text/html" })
 
@@ -13,6 +13,9 @@ RSpec.describe LlmScraper::ContentFetchers::Local do
 
       expect(result).to include("顾景舟")
       expect(result).to include("zisha")
+      expect(result).to match(/^#\s+顾景舟/)   # h1 → Markdown heading
+      expect(result).to include("**zisha**")   # strong → bold
+      expect(result).to include("- Hand-throwing") # li → Markdown list
       expect(result).not_to include("<script>")
       expect(result).not_to include("<nav>")
       expect(result).not_to include("<footer>")

@@ -46,11 +46,11 @@ module LlmScraper
         raise LlmScraper::FetchError, "SPA fetch failed for #{url}: #{e.message}"
       end
 
-      # Strips boilerplate, collapses whitespace — reduces ~50k tokens → ~5k
+      # Strips boilerplate then converts to Markdown, preserving headings/tables/lists
       def clean_html(html)
         doc = Nokogiri::HTML(html)
         doc.css("script, style, nav, footer, header, [aria-hidden]").remove
-        doc.css("body").inner_text.gsub(/\s+/, " ").strip
+        ReverseMarkdown.convert(doc.css("body").to_html, unknown_tags: :bypass)
       end
     end
   end
